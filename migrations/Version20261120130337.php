@@ -1,0 +1,79 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20261120130337 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TEMPORARY TABLE __temp__espece AS SELECT id, nom FROM espece');
+        $this->addSql('DROP TABLE espece');
+        $this->addSql('CREATE TABLE espece (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(100) NOT NULL)');
+        $this->addSql('INSERT INTO espece (id, nom) SELECT id, nom FROM __temp__espece');
+        $this->addSql('DROP TABLE __temp__espece');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_1A2A1B16C6E55B5 ON espece (nom)');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__maison AS SELECT id, nom FROM maison');
+        $this->addSql('DROP TABLE maison');
+        $this->addSql('CREATE TABLE maison (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(50) NOT NULL)');
+        $this->addSql('INSERT INTO maison (id, nom) SELECT id, nom FROM __temp__maison');
+        $this->addSql('DROP TABLE __temp__maison');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_F90CB66D6C6E55B5 ON maison (nom)');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__patronus AS SELECT id, nom FROM patronus');
+        $this->addSql('DROP TABLE patronus');
+        $this->addSql('CREATE TABLE patronus (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(100) NOT NULL)');
+        $this->addSql('INSERT INTO patronus (id, nom) SELECT id, nom FROM __temp__patronus');
+        $this->addSql('DROP TABLE __temp__patronus');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_4D5A599A6C6E55B5 ON patronus (nom)');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__personnage AS SELECT id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id FROM personnage');
+        $this->addSql('DROP TABLE personnage');
+        $this->addSql('CREATE TABLE personnage (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, hogwarts_id VARCHAR(255) NOT NULL, nom VARCHAR(255) NOT NULL, genre VARCHAR(50) DEFAULT NULL, image VARCHAR(255) DEFAULT NULL, maison_id INTEGER DEFAULT NULL, espece_id INTEGER DEFAULT NULL, patronus_id INTEGER DEFAULT NULL, CONSTRAINT FK_6AEA486D9D67D8AF FOREIGN KEY (maison_id) REFERENCES maison (id) ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_6AEA486D2D191E7A FOREIGN KEY (espece_id) REFERENCES espece (id) ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_6AEA486D7602A6AC FOREIGN KEY (patronus_id) REFERENCES patronus (id) ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO personnage (id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id) SELECT id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id FROM __temp__personnage');
+        $this->addSql('DROP TABLE __temp__personnage');
+        $this->addSql('CREATE INDEX IDX_6AEA486D7602A6AC ON personnage (patronus_id)');
+        $this->addSql('CREATE INDEX IDX_6AEA486D2D191E7A ON personnage (espece_id)');
+        $this->addSql('CREATE INDEX IDX_6AEA486D9D67D8AF ON personnage (maison_id)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_6AEA486DB818534C ON personnage (hogwarts_id)');
+    }
+
+    public function down(Schema $schema): void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TEMPORARY TABLE __temp__espece AS SELECT id, nom FROM espece');
+        $this->addSql('DROP TABLE espece');
+        $this->addSql('CREATE TABLE espece (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(100) NOT NULL)');
+        $this->addSql('INSERT INTO espece (id, nom) SELECT id, nom FROM __temp__espece');
+        $this->addSql('DROP TABLE __temp__espece');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__maison AS SELECT id, nom FROM maison');
+        $this->addSql('DROP TABLE maison');
+        $this->addSql('CREATE TABLE maison (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(50) NOT NULL)');
+        $this->addSql('INSERT INTO maison (id, nom) SELECT id, nom FROM __temp__maison');
+        $this->addSql('DROP TABLE __temp__maison');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__patronus AS SELECT id, nom FROM patronus');
+        $this->addSql('DROP TABLE patronus');
+        $this->addSql('CREATE TABLE patronus (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(100) NOT NULL)');
+        $this->addSql('INSERT INTO patronus (id, nom) SELECT id, nom FROM __temp__patronus');
+        $this->addSql('DROP TABLE __temp__patronus');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__personnage AS SELECT id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id FROM personnage');
+        $this->addSql('DROP TABLE personnage');
+        $this->addSql('CREATE TABLE personnage (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, hogwarts_id VARCHAR(255) NOT NULL, nom VARCHAR(255) NOT NULL, genre VARCHAR(50) DEFAULT NULL, image VARCHAR(255) DEFAULT NULL, maison_id INTEGER DEFAULT NULL, espece_id INTEGER DEFAULT NULL, patronus_id INTEGER DEFAULT NULL, CONSTRAINT FK_6AEA486D9D67D8AF FOREIGN KEY (maison_id) REFERENCES maison (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_6AEA486D2D191E7A FOREIGN KEY (espece_id) REFERENCES espece (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_6AEA486D7602A6AC FOREIGN KEY (patronus_id) REFERENCES patronus (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO personnage (id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id) SELECT id, hogwarts_id, nom, genre, image, maison_id, espece_id, patronus_id FROM __temp__personnage');
+        $this->addSql('DROP TABLE __temp__personnage');
+        $this->addSql('CREATE INDEX IDX_6AEA486D9D67D8AF ON personnage (maison_id)');
+        $this->addSql('CREATE INDEX IDX_6AEA486D2D191E7A ON personnage (espece_id)');
+        $this->addSql('CREATE INDEX IDX_6AEA486D7602A6AC ON personnage (patronus_id)');
+    }
+}

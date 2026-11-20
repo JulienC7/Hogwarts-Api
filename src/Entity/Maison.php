@@ -7,22 +7,32 @@ use App\Repository\MaisonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MaisonRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['maison:lire']],
+    denormalizationContext: ['groups' => ['maison:ecrire']]
+)]
 class Maison
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['maison:lire'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
+    #[Groups(['maison:lire', 'maison:ecrire', 'personnage:lire'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
     private ?string $nom = null;
 
     /**
      * @var Collection<int, Personnage>
      */
+    #[Groups(['maison:lire'])]
     #[ORM\OneToMany(targetEntity: Personnage::class, mappedBy: 'maison')]
     private Collection $personnages;
 

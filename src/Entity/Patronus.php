@@ -7,22 +7,32 @@ use App\Repository\PatronusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PatronusRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['patronus:lire']],
+    denormalizationContext: ['groups' => ['patronus:ecrire']]
+)]
 class Patronus
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['patronus:lire'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique: true)]
+    #[Groups(['patronus:lire', 'patronus:ecrire', 'personnage:lire'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $nom = null;
 
     /**
      * @var Collection<int, Personnage>
      */
+    #[Groups(['patronus:lire'])]
     #[ORM\OneToMany(targetEntity: Personnage::class, mappedBy: 'patronus')]
     private Collection $personnages;
 

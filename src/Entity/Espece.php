@@ -7,22 +7,32 @@ use App\Repository\EspeceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EspeceRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['espece:lire']],
+    denormalizationContext: ['groups' => ['espece:ecrire']]
+)]
 class Espece
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['espece:lire'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique: true)]
+    #[Groups(['espece:lire', 'espece:ecrire', 'personnage:lire'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $nom = null;
 
     /**
      * @var Collection<int, Personnage>
      */
+    #[Groups(['espece:lire'])]
     #[ORM\OneToMany(targetEntity: Personnage::class, mappedBy: 'espece')]
     private Collection $personnages;
 
