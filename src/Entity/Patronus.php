@@ -7,6 +7,7 @@ use App\Repository\PatronusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['patronus:lire']],
     denormalizationContext: ['groups' => ['patronus:ecrire']]
 )]
+#[UniqueEntity('nom')]
 class Patronus
 {
     #[ORM\Id]
